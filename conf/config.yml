@@ -1,0 +1,7 @@
+manager:
+  server: localhost
+  port: 8000
+ssh:
+  localport: 22
+  server: localhost
+ 

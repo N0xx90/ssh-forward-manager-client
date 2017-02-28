@@ -1,0 +1,15 @@
+[Unit]
+Description=SSH forward manager Service
+After=syslog.target
+
+[Service]
+Type=simple
+User=sfmclient
+Group=sfmclient
+WorkingDirectory=/usr/local/bin/
+ExecStart=/usr/local/bin/sfmclient
+StandardOutput=syslo
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target

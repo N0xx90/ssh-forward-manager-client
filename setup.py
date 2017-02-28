@@ -28,7 +28,7 @@ setup(
     install_requires=['pyaml'],
     packages=['sfmclient'],
     data_files=[('/etc/sfmclient/', ['conf/config.yml']),
-                ('/etc/systemd/user/',['conf/sfmclient.service'])],
+                ('/etc/systemd/system/',['conf/sfmclient.service'])],
     entry_points = {
         'console_scripts': [
             'sfmclient = sfmclient.main:main',

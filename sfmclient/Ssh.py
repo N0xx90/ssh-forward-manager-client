@@ -42,7 +42,7 @@ class Ssh():
 
     def stop(self) :
         if self.status():
-                kCommand = 'kill -9 '+pids_out
+                kCommand = 'kill -9 '+self.pids
                 p = subprocess.Popen(kCommand, shell=True, stdout=subprocess.PIPE)
                 out, err = p.communicate()
                 if err is None :

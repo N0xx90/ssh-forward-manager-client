@@ -25,7 +25,7 @@ setup(
     cmdclass={
         'install': PostInstallCommand,
     },
- 
+    install_requires=['pyaml'],
     packages=['sfmclient'],
     data_files=[('/etc/sfmclient/', ['conf/config.yml']),
                 ('/etc/systemd/user/',['conf/sfmclient.service'])],

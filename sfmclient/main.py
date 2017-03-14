@@ -8,6 +8,7 @@ import logging
 import json
 import sys
 import os
+import time
 
 #if sys.platform == "linux":
 #    sys.path.append('/usr/lib/sfm-client')
@@ -40,6 +41,11 @@ class SshManager():
             while True :
                 logging.debug("Wait for server...")
                 data = self.cs.recv(2048)
+                logging.debug(data)
+                if "ping" in data:
+                    self.cs.send("pong")
+                    continue
+
                 data = Packet.parse(data)
                 if data["command"] == 'close' :
                     self.cs.send("close")
@@ -90,8 +96,7 @@ class SshManager():
         return resp.get()
 
 def main() :
-    s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-
+    retrycount = 1
     try : 
         global CONFIG
         config_files = ['config.yml', '/etc/sfmclient/config.yml']
@@ -104,20 +109,32 @@ def main() :
                 break
         if not config_file_found :
             raise Exception('No config file found')
-        host = str(CONFIG["manager"]["server"])
-        port = int(CONFIG["manager"]["port"])
-        logging.debug("Connect to server")
-        s.connect((host,port))
-
-        logging.debug("Create Ssh Manager")
-        sshM = SshManager(s)
-
-        logging.debug("run Ssh Manager")
-        sshM.run()
-
     except Exception, e:
         logging.error(e)
-    finally :
-        s.close()
+        exit(1)
+
+    host = str(CONFIG["manager"]["server"])
+    port = int(CONFIG["manager"]["port"])
+    logging.debug("Connect to server")
+    while 1 :
+        try :
+
+            s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+            s.connect((host,port))
+
+            logging.debug("Create Ssh Manager")
+            sshM = SshManager(s)
+
+            logging.debug("run Ssh Manager")
+            sshM.run()
+
+        except Exception, e:
+            logging.error(e)
+        finally :
+            s.close()
+            retrycount += 1
+            logging.info("Cannot connect, retry in %d seconds..." %(retrycount*10))
+            time.sleep(retrycount*10)
+
 if __name__ == "__main__" :
     main()
